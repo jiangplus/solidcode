@@ -13,17 +13,18 @@ describe("Mintable", function () {
     // console.log('account', owner.address, otherAccount.address)
 
     const Mintable = await ethers.getContractFactory("MintableUpgradeable");
-    const mintable = await upgrades.deployProxy(Mintable, ["SuperToken", "SuperToken", "http://google.com/"]);
+    const mintable = await upgrades.deployProxy(Mintable, ["SuperToken", "SuperToken", "http://google.com/"],
+    {
+      kind: 'uups',
+    });
     // const mintable = await Mintable.attach("");
     console.log('mintable address:', mintable.address)
-
 
     const Mintable2 = await ethers.getContractFactory("MintableUpgradeableV2");
     const mintable2 = await upgrades.upgradeProxy(mintable.address, Mintable2);
     console.log("mintable upgraded");
 
     console.log(mintable2)
-
 
     return { mintable: mintable2, owner, otherAccount };
   }

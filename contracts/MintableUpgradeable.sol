@@ -7,10 +7,9 @@ import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-
-
-contract MintableUpgradeable is ERC721Upgradeable, OwnableUpgradeable {
+contract MintableUpgradeable is ERC721Upgradeable, UUPSUpgradeable, OwnableUpgradeable {
     using StringsUpgradeable for uint256;
 
     string public baseURI;
@@ -29,8 +28,7 @@ contract MintableUpgradeable is ERC721Upgradeable, OwnableUpgradeable {
     }
 
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Upgradeable) returns (bool) {
-        return
-            super.supportsInterface(interfaceId);
+        return super.supportsInterface(interfaceId);
     }
 
     function mint(address to) external onlyOwner {
@@ -52,10 +50,12 @@ contract MintableUpgradeable is ERC721Upgradeable, OwnableUpgradeable {
         baseURI = _baseURI;
         emit BaseURIChanged(_baseURI);
     }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 }
 
 
-contract MintableUpgradeableV2 is ERC721Upgradeable, OwnableUpgradeable {
+contract MintableUpgradeableV2 is ERC721Upgradeable, UUPSUpgradeable, OwnableUpgradeable {
     using StringsUpgradeable for uint256;
 
     string public baseURI;
@@ -74,8 +74,7 @@ contract MintableUpgradeableV2 is ERC721Upgradeable, OwnableUpgradeable {
     }
 
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Upgradeable) returns (bool) {
-        return
-            super.supportsInterface(interfaceId);
+        return super.supportsInterface(interfaceId);
     }
 
     function mint(address to) external onlyOwner {
@@ -113,5 +112,7 @@ contract MintableUpgradeableV2 is ERC721Upgradeable, OwnableUpgradeable {
         baseURI = _baseURI;
         emit BaseURIChanged(_baseURI);
     }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 }
 
