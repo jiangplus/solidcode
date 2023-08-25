@@ -9,12 +9,11 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
 
-contract MintableUpgradeable is ERC721Upgradeable, AccessControlUpgradeable {
+
+contract MintableUpgradeable is ERC721Upgradeable, OwnableUpgradeable {
     using StringsUpgradeable for uint256;
 
     string public baseURI;
-
-    bytes32 public constant MINTER_ROLE = keccak256("MINTER");
 
     uint256 private _value;
 
@@ -24,22 +23,17 @@ contract MintableUpgradeable is ERC721Upgradeable, AccessControlUpgradeable {
     error URIQueryForNonexistentToken();
 
     function initialize(string memory name, string memory symbol, string memory uri) initializer public {
-    // constructor(string memory name, string memory symbol, string memory _baseURI) ERC721(name, symbol) {
         __ERC721_init(name, symbol);
-        __AccessControl_init();
+        __Ownable_init();
         baseURI = uri;
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _setupRole(MINTER_ROLE, msg.sender);
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Upgradeable, AccessControlUpgradeable) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Upgradeable) returns (bool) {
         return
             super.supportsInterface(interfaceId);
     }
 
-    function mint(address to) external {
-        require(hasRole(MINTER_ROLE, msg.sender), "caller is not a minter");
-
+    function mint(address to) external onlyOwner {
         _value += 1;
         _safeMint(to, _value);
     }
@@ -54,21 +48,17 @@ contract MintableUpgradeable is ERC721Upgradeable, AccessControlUpgradeable {
         return bytes(baseURI).length != 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : '';
     }
 
-    function setTokenURI(string memory _baseURI) external {
-        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "caller is not a minter");
-
+    function setTokenURI(string memory _baseURI) external onlyOwner {
         baseURI = _baseURI;
         emit BaseURIChanged(_baseURI);
     }
 }
 
 
-contract MintableUpgradeableV2 is ERC721Upgradeable, AccessControlUpgradeable {
+contract MintableUpgradeableV2 is ERC721Upgradeable, OwnableUpgradeable {
     using StringsUpgradeable for uint256;
 
     string public baseURI;
-
-    bytes32 public constant MINTER_ROLE = keccak256("MINTER");
 
     uint256 private _value;
 
@@ -78,28 +68,23 @@ contract MintableUpgradeableV2 is ERC721Upgradeable, AccessControlUpgradeable {
     error URIQueryForNonexistentToken();
 
     function initialize(string memory name, string memory symbol, string memory uri) initializer public {
-    // constructor(string memory name, string memory symbol, string memory _baseURI) ERC721(name, symbol) {
         __ERC721_init(name, symbol);
-        __AccessControl_init();
+        __Ownable_init();
         baseURI = uri;
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _setupRole(MINTER_ROLE, msg.sender);
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Upgradeable, AccessControlUpgradeable) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Upgradeable) returns (bool) {
         return
             super.supportsInterface(interfaceId);
     }
 
-    function mint(address to) external {
-        require(hasRole(MINTER_ROLE, msg.sender), "caller is not a minter");
+    function mint(address to) external onlyOwner {
 
         _value += 1;
         _safeMint(to, _value);
     }
 
-    function mintMany(address to, uint256 amount) external {
-        require(hasRole(MINTER_ROLE, msg.sender), "caller is not a minter");
+    function mintMany(address to, uint256 amount) external onlyOwner {
 
         for (uint256 i = 0; i < amount; i+=1) {
             _value += 1;
@@ -107,8 +92,7 @@ contract MintableUpgradeableV2 is ERC721Upgradeable, AccessControlUpgradeable {
         }
     }
 
-    function mintBatch(address[] calldata addrs) external {
-        require(hasRole(MINTER_ROLE, msg.sender), "caller is not a minter");
+    function mintBatch(address[] calldata addrs) external onlyOwner {
 
         for (uint256 i = 0; i < addrs.length; i+=1) {
             _value += 1;
@@ -124,8 +108,7 @@ contract MintableUpgradeableV2 is ERC721Upgradeable, AccessControlUpgradeable {
         return 'nope';
     }
 
-    function setTokenURI(string memory _baseURI) external {
-        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "caller is not a minter");
+    function setTokenURI(string memory _baseURI) external onlyOwner {
 
         baseURI = _baseURI;
         emit BaseURIChanged(_baseURI);
