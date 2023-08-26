@@ -84,7 +84,6 @@ contract MintableUpgradeableV2 is ERC721Upgradeable, UUPSUpgradeable, OwnableUpg
     }
 
     function mintMany(address to, uint256 amount) external onlyOwner {
-
         for (uint256 i = 0; i < amount; i+=1) {
             _value += 1;
             _safeMint(to, _value);
@@ -103,7 +102,7 @@ contract MintableUpgradeableV2 is ERC721Upgradeable, UUPSUpgradeable, OwnableUpg
         return _exists(tokenId);
     }
 
-    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+    function tokenURI(uint256) public view virtual override returns (string memory) {
         return 'nope';
     }
 
