@@ -33,17 +33,20 @@ contract MintableUpgradeableTest is Test {
       0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
 
     function setUp() public {
+
         implementationV1 = new MintableUpgradeable();
 
         // deploy proxy contract and point it to implementation
         proxy = new UUPSProxy(address(implementationV1), "");
 
+        vm.prank(oneAddr);
         wrappedProxyV1 = MintableUpgradeable(address(proxy));
         wrappedProxyV1.initialize("SuperToken", "SuperToken", "http://google.com/");
-
     }
 
     function test_Increment() public {
+        vm.prank(oneAddr);
         wrappedProxyV1.mint(oneAddr);
+        assertEq(wrappedProxyV1.ownerOf(1), oneAddr);
     }
 }
