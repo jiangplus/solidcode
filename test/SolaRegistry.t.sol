@@ -2,9 +2,9 @@
 pragma solidity ^0.8.17;
 
 import {Test, console2} from "forge-std/Test.sol";
+import {SolaProfile} from "../contracts/SolaProfile.sol";
 // import {MintableUpgradeable} from "../contracts/MintableUpgradeable.sol";
-import {SolaProfile} from "../contracts/SolaRegistry.sol";
-import {Mintable} from "../contracts/Mintable.sol";
+// import {Mintable} from "../contracts/Mintable.sol";
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
@@ -35,19 +35,24 @@ contract MintableUpgradeableTest is Test {
       0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
 
     function setUp() public {
-        implementationV1 = new SolaProfile();
+      implementationV1 = new SolaProfile();
 
-        // deploy proxy contract and point it to implementation
-        proxy = new UUPSProxy(address(implementationV1), "");
+      proxy = new UUPSProxy(address(implementationV1), "");
 
-        vm.prank(oneAddr);
-        profile = SolaProfile(address(proxy));
-        profile.initialize();
+      vm.prank(oneAddr);
+      profile = SolaProfile(address(proxy));
+      profile.initialize("Profile", "Profile", "http://example.com", 37);
     }
 
     function test_ProfileAdmin() public {
-        // wrappedProxyV1.mint(oneAddr);
-        // assertEq(wrappedProxyV1.ownerOf(1), oneAddr);
-        assertEq(profile.owner(), oneAddr);
+      assertEq(profile.owner(), oneAddr);
+      vm.prank(oneAddr);
+      profile.setProfileCreator(oneAddr, true);
+      vm.prank(oneAddr);
+      uint256 tokenId =  profile.createProfile(oneAddr, "");
+
+      console2.log(tokenId);
+
+      assertEq(profile.ownerOf(38), oneAddr);
     }
 }
